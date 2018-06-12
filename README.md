@@ -1,27 +1,40 @@
 # DockerService
 Controle de Docker para redis
 
-
+Criar os diretorios de dados:
+```bash
+	mkdir redis/data/
+	mkdir mongo/data/
+	mkdir syslog/logs
+```
 Para colocar no boot apenas o servico do redis (com o docker-compose up) executado previamente:
- cp cfg_to_boot/docker_redis.service /etc/systemd/system/docker_redis.service
- systemctl enable docker_redis.service
 
-ou para usar o compose no boot copie o diretorio raiz Docker-Servers para opt:
- mv Docker-Servers /opt
- cp /etc/systemd/system/docker-compose-app.service
- systemctl enable docker-compose-app.service
+```bash
+ 	cp cfg_to_boot/docker_redis.servic /etc/systemd/system/docker_redis.service
+ 	systemctl enable docker_redis.service
+ ```
 
--Procedimento Docker Redis
---instalar docker:
-sudo apt install docker.io
-sudo apt install docker-compose
+Para usar o compose no boot copie o diretorio raiz Docker-Servers para opt:
 
---Baixar o Redis:
-docker pull redis
+```bash
+ 	mv Docker-Servers /opt
+ 	cp /etc/systemd/system/docker-compose-app.service
+ 	systemctl enable docker-compose-app.service
+ ```
 
-SEM COMPOSER:
+Procedimento Instalar Docker:
+```bash
+	sudo apt install docker.io
+	sudo apt install docker-compose
+ ```
 
-	--Crie um arquivo Dockerfile no deretorio Redis como abaixo:(ira cria uma copia modificada da imagem original)
+Baixar o Redis:
+```bash
+	docker pull redis
+```
+
+ - SEM COMPOSER:
+Crie um arquivo Dockerfile no deretorio Redis como abaixo:(ira cria uma copia modificada da imagem original)
 
 		FROM redis
 		MAINTAINER Inovação NewSpace
@@ -29,15 +42,21 @@ SEM COMPOSER:
 		EXPOSE 6379
 		CMD redis-server /usr/local/etc/redis.conf && /bin/bash #(&& /bin/bash opcional para controle interativo)
 		
-	--execute o comando para gerar o docker(snapshot) da imagem redis:
-	docker build -t img_redis_desenv . #(img_redis_desenv e o nome da nova imagem criada a partir da imagem redis)
+	- execute o comando para gerar o docker(snapshot) da imagem redis:
 
-	--execute o docker(snapshot) a primeira vez (sem compose):
-	docker run --name redis_desenv -idt -p 6379:6379 img_redis_desenv (nome do docker redis_desenv da imagem img_redis_desenv)
+```bash
+	docker build -t img_redis_desenv
+```
 
--COM COMPOSER:
+	 - execute o docker(snapshot) a primeira vez (sem compose):
 
-	--no diretorio pegasus editar o arquivo docker-compose.yml
+```bash
+	docker run --name redis_desenv -idt -p 6379:6379 img_redis_desenv
+```
+
+  - COM COMPOSER:
+
+	- No diretorio pegasus editar o arquivo docker-compose.yml
 
 		version: '2'
 		services:
@@ -53,7 +72,7 @@ SEM COMPOSER:
 		  volumes:
 		  - ~/Projetos/pegasus/redis/data:/data
 
-	-- buid cria imagem img_redis_desenv com docker redis_desenv:
+		-- buid cria imagem img_redis_desenv com docker redis_desenv:
 	docker-compose build
 
 	--Levante os dockers:
