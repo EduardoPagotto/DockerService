@@ -1,0 +1,19 @@
+# copy as: /etc/systemd/system/docker-compose-app.service
+# Diretorio Docker-Servers deve ser copiado para /opt
+
+[Unit]
+Description=Docker Compose Application Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+WorkingDirectory=/opt/Docker-Servers
+ExecStart=/usr/bin/docker-compose up
+ExecStop=/usr/bin/docker-compose down
+TimeoutStartSec=0
+Restart=on-failure
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target

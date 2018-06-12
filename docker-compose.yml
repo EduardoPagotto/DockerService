@@ -1,0 +1,32 @@
+version: '2'
+services:
+  redis:
+    build: ./redis
+    container_name: redis_container
+    image: redis_image
+    ports:
+    - "6379:6379"
+    volumes:
+    - ./redis/data:/data
+
+# mongo:
+#  image: mongo
+#  container_name: mongo_container
+#  hostname: "mongo01"
+#  ports:
+#  - 27017:27017
+#  labels:
+#   NAME: "mongo01"
+#  volumes:
+#  - ./mongo/data/:/data/db
+
+#  syslog:
+#    build: ./syslog
+#    container_name: syslog_desenv
+#    image: img_syslog_desenv
+#    ports:
+#    - "601:601"
+#    - "514:514"
+#    volumes:
+#    - ~/Projetos/pegasus/syslog/conf/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
+#    - ~/Projetos/pegasus/syslog/logs:/var/log

@@ -1,0 +1,13 @@
+# Copie este arquivo como: /etc/systemd/system/docker_redis.service
+[Unit]
+Description=Redis container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a redis_container
+ExecStop=/usr/bin/docker stop -t 2 redis_container
+
+[Install]
+WantedBy=multi-user.target
