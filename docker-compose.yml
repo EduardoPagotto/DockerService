@@ -1,5 +1,6 @@
-version: '2'
+version: '3'
 services:
+  #Servico de Redis
   redis:
     build: ./redis
     container_name: redis_container
@@ -9,24 +10,34 @@ services:
     volumes:
     - ./redis/data:/data
 
-# mongo:
-#  image: mongo
-#  container_name: mongo_container
-#  hostname: "mongo01"
-#  ports:
-#  - 27017:27017
-#  labels:
-#   NAME: "mongo01"
-#  volumes:
-#  - ./mongo/data/:/data/db
+  # #Servico de npm privado
+  # sinopia:
+  #   image: keyvanfatehi/sinopia:latest
+  #   ports: 
+  #   - "4873:4873"
+  #   volumes:
+  #   - ./sinopia/storage:/opt/sinopia/storage
+  #   - ./sinopia/etc/config.yaml:/opt/sinopia/config.yaml
 
-#  syslog:
-#    build: ./syslog
-#    container_name: syslog_desenv
-#    image: img_syslog_desenv
-#    ports:
-#    - "601:601"
-#    - "514:514"
-#    volumes:
-#    - ~/Projetos/pegasus/syslog/conf/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
-#    - ~/Projetos/pegasus/syslog/logs:/var/log
+  # #Banco de dados NoSQL MongoDB
+  # mongo:
+  #   image: mongo
+  #   container_name: mongo_container
+  #   hostname: "mongo01"
+  #   ports:
+  #   - 27017:27017
+  #   labels:
+  #     NAME: "mongo01"
+  #   volumes:
+  #   - ./mongo/data/:/data/db
+
+  # #servico de Syslog Unix
+  # syslog:
+  #   container_name: syslog_container
+  #   image: balabit/syslog-ng
+  #   ports:
+  #   - "601:601"
+  #   - "514:514"
+  #   volumes:
+  #   - ./syslog/conf/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
+  #   - ./syslog/logs:/var/log
