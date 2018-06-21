@@ -1,42 +1,57 @@
 version: '3'
 services:
-    composto:
-      build: ./composto
-      container_name: composto_nginx_nfs
-      image: img_ubuntu_nginx_nfs
-      privileged: true
-      ports:
-      - 8080:8080
-      - 2049:2049
-      #- 111:111
-      volumes:
-      - ./composto/share_file:/usr/share/nginx/html
+  # Servico composto nginx-nfs
+  composto:
+    build: ./composto
+    container_name: composto_nginx_nfs_container
+    image: img_ubuntu_nginx_nfs
+    privileged: true
+    ports:
+    - 8080:8080
+    - 2049:2049
+    volumes:
+    - ./composto/share_file:/usr/share/nginx/html
   
-  #Servico de Redis
+  # # Servico de Redis
   # redis:
   #   build: ./redis
   #   container_name: redis_container
   #   image: redis_image
+  #   # # logging:
+  #   # #   driver: "json-file"
+  #   # #   options:
+  #   # #     max-size: "200k"
+  #   # #     max-file: "10"
+  #   # logging:
+  #   #   driver: "syslog"
+  #   #   options:
+  #   #     syslog-address: "tcp://192.168.0.42:123"
   #   ports:
   #   - "6379:6379"
+  #   #networks:
+  #   #- development-network
+  #   #depends_on:
+  #   #- "mongodb"
   #   volumes:
   #   - ./redis/data:/data
 
-#   NFS:
-#     container_name: nfs
-#     #build: ./nfs
-#     #image: nfs_testez1
-#     image: itsthenetwork/nfs-server-alpine:latest
-#     privileged: true
-#     ports:
-#     - "2049:2049"
-#     volumes:
-#     - ./nfs/share_nfs:/nfsshare
-#     environment:
-#     - SHARED_DIRECTORY=/nfsshare
+  # #Servico de NFS 
+  # NFS:
+  #   container_name: nfs_container
+  #   #build: ./nfs
+  #   #image: nfs_testez1
+  #   image: itsthenetwork/nfs-server-alpine:latest
+  #   privileged: true
+  #   ports:
+  #   - "2049:2049"
+  #   volumes:
+  #   - ./nfs/share_nfs:/nfsshare
+  #   environment:
+  #   - SHARED_DIRECTORY=/nfsshare
 
+  # #Servico web 
   # nginx:
-  #   container_name: srv-nginx
+  #   container_name: nginx_container
   #   image: nginx
   #   volumes:
   #   - ./nginx/content:/usr/share/nginx/html
@@ -46,6 +61,7 @@ services:
   # #Servico de npm privado
   # sinopia:
   #   image: keyvanfatehi/sinopia:latest
+  #   container_name: sinopia_container
   #   ports: 
   #   - "4873:4873"
   #   volumes:
@@ -53,9 +69,9 @@ services:
   #   - ./sinopia/etc/config.yaml:/opt/sinopia/config.yaml
 
   # #Banco de dados NoSQL MongoDB
-  # mongo:
+  # mongodb:
   #   image: mongo
-  #   container_name: mongo_container
+  #   container_name: mongodb_container
   #   hostname: "mongo01"
   #   ports:
   #   - 27017:27017
@@ -74,3 +90,20 @@ services:
   #   volumes:
   #   - ./syslog/conf/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
   #   - ./syslog/logs:/var/log
+
+# volumes:  
+#   redis_data:
+
+# networks:
+#   development-network:
+#     driver: bridge
+
+#   app_net:
+#     driver: bridge
+#     enable_ipv6: true
+#     external: true
+#     ipam:
+#       driver: default
+#       config:
+#       - subnet: 172.16.238.0/24
+#       - subnet: 2001:3984:3989::/64
