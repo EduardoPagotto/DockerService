@@ -1,14 +1,47 @@
 version: '3'
 services:
+    composto:
+      build: ./composto
+      container_name: composto_nginx_nfs
+      image: img_ubuntu_nginx_nfs
+      privileged: true
+      ports:
+      - 8080:8080
+      - 2049:2049
+      #- 111:111
+      volumes:
+      - ./composto/share_file:/usr/share/nginx/html
+  
   #Servico de Redis
-  redis:
-    build: ./redis
-    container_name: redis_container
-    image: redis_image
-    ports:
-    - "6379:6379"
-    volumes:
-    - ./redis/data:/data
+  # redis:
+  #   build: ./redis
+  #   container_name: redis_container
+  #   image: redis_image
+  #   ports:
+  #   - "6379:6379"
+  #   volumes:
+  #   - ./redis/data:/data
+
+#   NFS:
+#     container_name: nfs
+#     #build: ./nfs
+#     #image: nfs_testez1
+#     image: itsthenetwork/nfs-server-alpine:latest
+#     privileged: true
+#     ports:
+#     - "2049:2049"
+#     volumes:
+#     - ./nfs/share_nfs:/nfsshare
+#     environment:
+#     - SHARED_DIRECTORY=/nfsshare
+
+  # nginx:
+  #   container_name: srv-nginx
+  #   image: nginx
+  #   volumes:
+  #   - ./nginx/content:/usr/share/nginx/html
+  #   ports:
+  #   - "8080:80"
 
   # #Servico de npm privado
   # sinopia:

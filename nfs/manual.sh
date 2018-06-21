@@ -1,0 +1,1 @@
+docker run -d --name nfs --privileged -p 2049:2049  -v /home/pagotto/Projetos/DockerService/nfs/share_nfs:/nfsshare -e SHARED_DIRECTORY=/nfsshare itsthenetwork/nfs-server-alpine:latest
