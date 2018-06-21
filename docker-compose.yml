@@ -91,6 +91,17 @@ services:
   #   - ./syslog/conf/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
   #   - ./syslog/logs:/var/log
 
+  # # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
+  # rsyslog:
+  #   build: ./rsyslog
+  #   container_name: rsyslog_container
+  #   image: img_rsyslog
+  #   ports:
+  #   - 514:514/udp
+  #   volumes:
+  #   - ./rsyslog/log:/var/log
+  #   - ./rsyslog/rsyslog.d:/etc/rsyslog.d
+
 # volumes:  
 #   redis_data:
 
