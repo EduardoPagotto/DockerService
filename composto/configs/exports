@@ -1,1 +1,1 @@
-/usr/share/nginx/html *(rw,fsid=0,sync,subtree_check,no_auth_nlm,insecure,no_root_squash)
+/usr/share/nginx/html *(rw,fsid=0,async,no_subtree_check,no_auth_nlm,insecure,no_root_squash)

@@ -1,41 +1,41 @@
 version: '3'
 services:
-  # Servico composto nginx-nfs
-  composto:
-    build: ./composto
-    container_name: composto_nginx_nfs_container
-    image: img_ubuntu_nginx_nfs
-    privileged: true
-    ports:
-    - 8080:8080
-    - 2049:2049
-    volumes:
-    - ./composto/share_file:/usr/share/nginx/html
-  
-  # # Servico de Redis
-  # redis:
-  #   build: ./redis
-  #   container_name: redis_container
-  #   image: redis_image
-  #   # # logging:
-  #   # #   driver: "json-file"
-  #   # #   options:
-  #   # #     max-size: "200k"
-  #   # #     max-file: "10"
-  #   # logging:
-  #   #   driver: "syslog"
-  #   #   options:
-  #   #     syslog-address: "tcp://192.168.0.42:123"
+  # # Servico composto nginx-nfs
+  # composto:
+  #   build: ./composto
+  #   container_name: composto_nginx_nfs_container
+  #   image: img_ubuntu_nginx_nfs
+  #   privileged: true
   #   ports:
-  #   - "6379:6379"
-  #   #networks:
-  #   #- development-network
-  #   #depends_on:
-  #   #- "mongodb"
+  #   - 8080:8080
+  #   - 2049:2049
   #   volumes:
-  #   - ./redis/data:/data
+  #   - ./composto/share_file:/usr/share/nginx/html
+  
+  # Servico de Redis
+  redis:
+    build: ./redis
+    container_name: redis_container
+    image: redis_image
+    # # logging:
+    # #   driver: "json-file"
+    # #   options:
+    # #     max-size: "200k"
+    # #     max-file: "10"
+    # logging:
+    #   driver: "syslog"
+    #   options:
+    #     syslog-address: "tcp://192.168.0.42:123"
+    ports:
+    - "6379:6379"
+    #networks:
+    #- development-network
+    #depends_on:
+    #- "mongodb"
+    volumes:
+    - ./redis/data:/data
 
-  # #Servico de NFS 
+  #Servico de NFS 
   # NFS:
   #   container_name: nfs_container
   #   #build: ./nfs
