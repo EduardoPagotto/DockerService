@@ -17,23 +17,18 @@ services:
     build: ./redis
     container_name: redis_container
     image: redis_image
-    # # logging:
-    # #   driver: "json-file"
-    # #   options:
-    # #     max-size: "200k"
-    # #     max-file: "10"
-    # logging:
-    #   driver: "syslog"
-    #   options:
-    #     syslog-address: "tcp://192.168.0.42:123"
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "udp://127.0.0.1:514"
     ports:
     - "6379:6379"
     #networks:
     #- development-network
-    #depends_on:
-    #- "mongodb"
+    depends_on:
+    - "rsyslog"
     volumes:
-    - ./redis/data:/data
+    - redis_data_desenv:/data
 
   #Servico de NFS 
   # NFS:
@@ -58,27 +53,34 @@ services:
   #   ports:
   #   - "8080:80"
 
-  # #Servico de npm privado
-  # sinopia:
-  #   image: keyvanfatehi/sinopia:latest
-  #   container_name: sinopia_container
-  #   ports: 
-  #   - "4873:4873"
-  #   volumes:
-  #   - ./sinopia/storage:/opt/sinopia/storage
-  #   - ./sinopia/etc/config.yaml:/opt/sinopia/config.yaml
+  #Servico de npm privado
+  sinopia:
+    image: keyvanfatehi/sinopia:latest
+    container_name: sinopia_container
+    ports: 
+    - "4873:4873"
+    volumes:
+    - ./sinopia/storage:/opt/sinopia/storage
+    - ./sinopia/etc/config.yaml:/opt/sinopia/config.yaml
 
   # #Banco de dados NoSQL MongoDB
   # mongodb:
   #   image: mongo
   #   container_name: mongodb_container
   #   hostname: "mongo01"
+  #   logging:
+  #     driver: "syslog"
+  #     options:
+  #       syslog-address: "udp://127.0.0.1:514"
+  #   depends_on:
+  #   - "rsyslog"
   #   ports:
   #   - 27017:27017
   #   labels:
   #     NAME: "mongo01"
   #   volumes:
-  #   - ./mongo/data/:/data/db
+  #   - mongo_data_desenv:/data/db
+  #   #- ./mongo/data/:/data/db
 
   # #servico de Syslog Unix
   # syslog:
@@ -91,19 +93,21 @@ services:
   #   - ./syslog/conf/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
   #   - ./syslog/logs:/var/log
 
-  # # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
-  # rsyslog:
-  #   build: ./rsyslog
-  #   container_name: rsyslog_container
-  #   image: img_rsyslog
-  #   ports:
-  #   - 514:514/udp
-  #   volumes:
-  #   - ./rsyslog/log:/var/log
-  #   - ./rsyslog/rsyslog.d:/etc/rsyslog.d
+  # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
+  rsyslog:
+    build: ./rsyslog
+    container_name: rsyslog_container
+    image: img_rsyslog
+    ports:
+    - 514:514/udp
+    volumes:
+    - ./rsyslog/log:/var/log
+    - ./rsyslog/rsyslog.d:/etc/rsyslog.d
 
-# volumes:  
-#   redis_data:
+volumes:  
+  redis_data_desenv:
+  mongo_data_desenv:
+  #./redis/data
 
 # networks:
 #   development-network:
