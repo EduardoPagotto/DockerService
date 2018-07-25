@@ -18,15 +18,15 @@ services:
     container_name: redis_container
     image: redis_image
     logging:
-      driver: "syslog"
+      driver: syslog
       options:
-        syslog-address: "udp://127.0.0.1:514"
+        syslog-address: udp://127.0.0.1:514
     ports:
-    - "6379:6379"
+    - 6379:6379
     #networks:
     #- development-network
     depends_on:
-    - "rsyslog"
+    - rsyslog
     volumes:
     - redis_data_desenv:/data
 
@@ -44,24 +44,31 @@ services:
   #   environment:
   #   - SHARED_DIRECTORY=/nfsshare
 
-  # #Servico web 
-  # nginx:
-  #   container_name: nginx_container
-  #   image: nginx
-  #   volumes:
-  #   - ./nginx/content:/usr/share/nginx/html
-  #   ports:
-  #   - "8080:80"
-
-  #Servico de npm privado
-  sinopia:
-    image: keyvanfatehi/sinopia:latest
-    container_name: sinopia_container
-    ports: 
-    - "4873:4873"
+  #Servico web 
+  nginx:
+    container_name: nginx_container
+    image: nginx
+    depends_on:
+    - rsyslog
+    logging:
+      driver: syslog
+      options:
+        syslog-address: udp://127.0.0.1:514
     volumes:
-    - ./sinopia/storage:/opt/sinopia/storage
-    - ./sinopia/etc/config.yaml:/opt/sinopia/config.yaml
+    #- ./nginx/content:/usr/share/nginx/html
+    - ~/Projetos/SCrappAmil/data/pdfs:/usr/share/nginx/html
+    ports:
+    - 5080:80
+
+  # #Servico de npm privado
+  # sinopia:
+  #   image: keyvanfatehi/sinopia:latest
+  #   container_name: sinopia_container
+  #   ports: 
+  #   - "4873:4873"
+  #   volumes:
+  #   - ./sinopia/storage:/opt/sinopia/storage
+  #   - ./sinopia/etc/config.yaml:/opt/sinopia/config.yaml
 
   # #Banco de dados NoSQL MongoDB
   # mongodb:
