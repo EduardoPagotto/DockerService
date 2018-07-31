@@ -13,4 +13,4 @@ EXPOSE 514 514/udp
 # config file. using this one for v8:
 COPY ./etc/rsyslog.conf /etc/rsyslog.conf
 
-ENTRYPOINT [ "rsyslogd", "-n" ]
+ENTRYPOINT [ "rsyslogd", "-dn" ]

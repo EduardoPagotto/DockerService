@@ -111,6 +111,25 @@ services:
     - ./rsyslog/log:/var/log
     - ./rsyslog/rsyslog.d:/etc/rsyslog.d
 
+  mysql:
+    container_name: mysql_container
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: testez1
+      MYSQL_ROOT_PASSWORD: Zaq12wsX
+    depends_on:
+    - rsyslog
+    logging:
+      driver: syslog
+      options:
+        syslog-address: udp://127.0.0.1:514
+    ports:
+    - 3306:3306
+    volumes:
+    - ./mysql/db:/var/lib/mysql
+
 volumes:  
   redis_data_desenv:
   mongo_data_desenv:
