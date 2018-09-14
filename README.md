@@ -1,11 +1,22 @@
+#Criar os diretorios no raiz
+```bash
+
+```
+
 # DockerService
 Controle de Docker para redis
 
 Criar os diretorios de dados:
 ```bash
-	mkdir redis/data/
-	mkdir mongo/data/
-	mkdir syslog/logs
+	mkdir -p rsyslog/log
+	mkdir -p redis/data
+	mkdir -p nfs/share_nfs
+	mkdir -p nginx/content
+	mkdir -p sinopia/storage
+	mkdir -p mongo/data
+	mkdir -p syslog/logs
+	mkdir -p mysql/db
+	mkdir -p composto/share_file
 ```
 Para colocar no boot apenas o servico do redis (com o docker-compose up) executado previamente:
 

@@ -1,16 +1,15 @@
 version: '3'
 services:
-  # # Servico composto nginx-nfs
-  # composto:
-  #   build: ./composto
-  #   container_name: composto_nginx_nfs_container
-  #   image: img_ubuntu_nginx_nfs
-  #   privileged: true
-  #   ports:
-  #   - 8080:8080
-  #   - 2049:2049
-  #   volumes:
-  #   - ./composto/share_file:/usr/share/nginx/html
+  # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
+  rsyslog:
+    build: ./rsyslog
+    container_name: rsyslog_container
+    image: img_rsyslog
+    ports:
+    - 514:514/udp
+    volumes:
+    - ./rsyslog/log:/var/log
+    - ./rsyslog/rsyslog.d:/etc/rsyslog.d
   
   # Servico de Redis
   redis:
@@ -60,6 +59,25 @@ services:
     ports:
     - 5080:80
 
+  mysql:
+    container_name: mysql_container
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: testez1
+      MYSQL_ROOT_PASSWORD: Zaq12wsX
+    depends_on:
+    - rsyslog
+    logging:
+      driver: syslog
+      options:
+        syslog-address: udp://127.0.0.1:514
+    ports:
+    - 3306:3306
+    volumes:
+    - ./mysql/db:/var/lib/mysql
+
   # #Servico de npm privado
   # sinopia:
   #   image: keyvanfatehi/sinopia:latest
@@ -100,35 +118,17 @@ services:
   #   - ./syslog/conf/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
   #   - ./syslog/logs:/var/log
 
-  # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
-  rsyslog:
-    build: ./rsyslog
-    container_name: rsyslog_container
-    image: img_rsyslog
-    ports:
-    - 514:514/udp
-    volumes:
-    - ./rsyslog/log:/var/log
-    - ./rsyslog/rsyslog.d:/etc/rsyslog.d
-
-  mysql:
-    container_name: mysql_container
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_DATABASE: testez1
-      MYSQL_ROOT_PASSWORD: Zaq12wsX
-    depends_on:
-    - rsyslog
-    logging:
-      driver: syslog
-      options:
-        syslog-address: udp://127.0.0.1:514
-    ports:
-    - 3306:3306
-    volumes:
-    - ./mysql/db:/var/lib/mysql
+  # # Servico composto nginx-nfs
+  # composto:
+  #   build: ./composto
+  #   container_name: composto_nginx_nfs_container
+  #   image: img_ubuntu_nginx_nfs
+  #   privileged: true
+  #   ports:
+  #   - 8080:8080
+  #   - 2049:2049
+  #   volumes:
+  #   - ./composto/share_file:/usr/share/nginx/html
 
 volumes:  
   redis_data_desenv:
