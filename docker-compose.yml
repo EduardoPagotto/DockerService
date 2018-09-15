@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
   rsyslog:
@@ -22,66 +22,64 @@ services:
         syslog-address: udp://127.0.0.1:514
     ports:
     - 6379:6379
-    #networks:
-    #- development-network
+    # networks:
+    # - development-network
     depends_on:
     - rsyslog
     volumes:
-    - redis_data_desenv:/data
+    # - type: volume #volume mapeado em NFS
+    #   source: nfs_redis
+    #   target: /data
+    #   volume:
+    #     nocopy: true
+    - redis_data_desenv:/data #volume mapeado para o volume docker
+    #- ./redis/data:/data #volume mapeado para o disco local
 
-  #Servico de NFS 
-  # NFS:
-  #   container_name: nfs_container
-  #   #build: ./nfs
-  #   #image: nfs_testez1
-  #   image: itsthenetwork/nfs-server-alpine:latest
-  #   privileged: true
-  #   ports:
-  #   - "2049:2049"
+  # #Servico web 
+  # nginx:
+  #   container_name: nginx_container
+  #   image: nginx
+  #   depends_on:
+  #   - rsyslog
+  #   logging:
+  #     driver: syslog
+  #     options:
+  #       syslog-address: udp://127.0.0.1:514
   #   volumes:
-  #   - ./nfs/share_nfs:/nfsshare
+  #   - ./nginx/content:/usr/share/nginx/html
+  #   #- ~/Projetos/SCrappAmil/data/pdfs:/usr/share/nginx/html
+  #   ports:
+  #   - 5080:80
+
+  # mysql:
+  #   container_name: mysql_container
+  #   image: mysql
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   restart: always
   #   environment:
-  #   - SHARED_DIRECTORY=/nfsshare
-
-  #Servico web 
-  nginx:
-    container_name: nginx_container
-    image: nginx
-    depends_on:
-    - rsyslog
-    logging:
-      driver: syslog
-      options:
-        syslog-address: udp://127.0.0.1:514
-    volumes:
-    #- ./nginx/content:/usr/share/nginx/html
-    - ~/Projetos/SCrappAmil/data/pdfs:/usr/share/nginx/html
-    ports:
-    - 5080:80
-
-  mysql:
-    container_name: mysql_container
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_DATABASE: testez1
-      MYSQL_ROOT_PASSWORD: Zaq12wsX
-    depends_on:
-    - rsyslog
-    logging:
-      driver: syslog
-      options:
-        syslog-address: udp://127.0.0.1:514
-    ports:
-    - 3306:3306
-    volumes:
-    - ./mysql/db:/var/lib/mysql
+  #     MYSQL_DATABASE: testez1
+  #     MYSQL_ROOT_PASSWORD: Zaq12wsX
+  #   depends_on:
+  #   - rsyslog
+  #   logging:
+  #     driver: syslog
+  #     options:
+  #       syslog-address: udp://127.0.0.1:514
+  #   ports:
+  #   - 3306:3306
+  #   volumes:
+  #   - ./mysql/db:/var/lib/mysql
 
   # #Servico de npm privado
   # sinopia:
   #   image: keyvanfatehi/sinopia:latest
   #   container_name: sinopia_container
+  #   depends_on:
+  #   - rsyslog
+  #   logging:
+  #     driver: syslog
+  #     options:
+  #       syslog-address: udp://127.0.0.1:514
   #   ports: 
   #   - "4873:4873"
   #   volumes:
@@ -106,6 +104,20 @@ services:
   #   volumes:
   #   - mongo_data_desenv:/data/db
   #   #- ./mongo/data/:/data/db
+
+  #Servico de NFS 
+  # NFS:
+  #   container_name: nfs_container
+  #   #build: ./nfs
+  #   #image: nfs_testez1
+  #   image: itsthenetwork/nfs-server-alpine:latest
+  #   privileged: true
+  #   ports:
+  #   - "2049:2049"
+  #   volumes:
+  #   - ./nfs/share_nfs:/nfsshare
+  #   environment:
+  #   - SHARED_DIRECTORY=/nfsshare
 
   # #servico de Syslog Unix
   # syslog:
@@ -133,18 +145,20 @@ services:
 volumes:  
   redis_data_desenv:
   mongo_data_desenv:
-  #./redis/data
+  # nfs_redis:
+  #   driver_opts:
+  #     type: nfs
+  #     o: addr=192.168.11.22,rw
+  #     device: ":/home/desenv/disco"
 
 # networks:
 #   development-network:
 #     driver: bridge
 
-#   app_net:
-#     driver: bridge
-#     enable_ipv6: true
-#     external: true
-#     ipam:
-#       driver: default
-#       config:
-#       - subnet: 172.16.238.0/24
-#       - subnet: 2001:3984:3989::/64
+#   coletividade-borg-network: # esconde maquina internamente
+#     internal: true
+#     # ipam:
+#     #   config:
+#     #   - subnet: 10.0.0.0/8
+#       #- subnet: 172.16.238.0/24
+#       #- subnet: 2001:3984:3989::/64
