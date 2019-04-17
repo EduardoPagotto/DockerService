@@ -1,4 +1,4 @@
-FROM voxxit/base:alpine
+FROM alpine
 
 MAINTAINER Eduardo Pagotto <edupagotto@gmail.com>
 
