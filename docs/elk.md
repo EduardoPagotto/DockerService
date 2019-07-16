@@ -1,5 +1,4 @@
 # ELK
-Stack ELK Teste de implementação, atualmente input do elastic direto pelo logger do pyton em UDP (sem filebeat)
 
 ## Dependencias
 Verificar se memoria esta compativel:
@@ -11,17 +10,19 @@ Se estiver abaixo de 2621448 executar:
 sudo sysctl -w vm.max_map_count=2621448 
 ```
 
-## Testes se funcionais
-- [Elastic online](http://127.0.0.1:9200) 
-- [Elastic Lista indices](http://127.0.0.1:9200/_cat/indices?v) 
-- [Elastic healt](http://127.0.0.1:9200/_cat/health)
+## Testes locais
+- [Elastic online](http://127.0.0.1:9200) url : `http://127.0.0.1:9200`
+- [Elastic Lista indices](http://127.0.0.1:9200/_cat/indices?v) url : `http://127.0.0.1:9200/_cat/indices?v` 
+- [Elastic healt](http://127.0.0.1:9200/_cat/health) url : `http://127.0.0.1:9200/_cat/health`
 
-## deleta indice nome 'post' (1:22:59)
+## deleta indice nome 'post'
 ```bash
 curl -X DELETE "127.0.0.1:9200/posts" -H 'Content-Type: application/json'
 ```
 
-# Log Slatch input dados 
+# Log Slatch input dados
+[./logstash/pipeline/logstash.conf](../logstash/pipeline/logstash.conf)
+
 config recebe de beat envia para console
 ```conf
   input {

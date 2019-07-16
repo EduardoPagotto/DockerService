@@ -18,7 +18,9 @@ mkdir -p ./data/mysql
 ```
 
 # Registro dos servicos de docker no boot da maquina
-obs: cfg para: '/home/desenv/Projetos/DockerService' em ./boot_config/docker-compose-app.service
+
+Configuração do diretorio de trabalho:
+[./boot_config/docker-compose-app.service](./boot_config/docker-compose-app.service)
 ```bash
 cp ./boot_config/docker-compose-app.service /etc/systemd/system/
 touch /etc/systemd/system/docker-compose-app.service
