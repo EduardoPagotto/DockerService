@@ -32,7 +32,7 @@ packages:
     publish: $authenticated
     proxy: npmjs
 
-  '@newspace/*':
+  '@myapps_scope/*':
     access: $all
     publish: $authenticated
     proxy: npmjs

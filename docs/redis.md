@@ -2,7 +2,7 @@
 Crie um arquivo Dockerfile no deretorio Redis como abaixo:(ira cria uma copia modificada da imagem original)
 ```file
 FROM redis
-MAINTAINER Inovação NewSpace
+LABEL MAINTAINER="Eduardo Pagotto <edupagotto@gmail.com>"
 COPY redis.conf /usr/local/etc/redis.conf
 EXPOSE 6379
 CMD redis-server /usr/local/etc/redis.conf && /bin/bash
