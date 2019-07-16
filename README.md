@@ -12,6 +12,18 @@ comando: 'create_dir_data.sh' faz isto
   mkdir -p ./data/mysql
 ```
 
+# Registro do servico
+obs: cfg para: '/home/desenv/Projetos/DockerService' em ./boot_config/docker-compose-app.service
+```bash
+	cp ./boot_config/docker-compose-app.service /etc/systemd/system/
+	touch /etc/systemd/system/docker-compose-app.service
+	chmod 664 /etc/systemd/system/docker-compose-app.service
+	systemctl daemon-reload # verifica todos os .service nos diretorios de services
+	systemctl enable docker-compose-app # para incluir no system
+	systemctl disable docker-compose-app # para desabilitar do system
+	systemctl start docker-compose-app
+```
+
 # ELK
 Stack ELK Teste de implementação, atualmente input do elastic direto pelo syslog (by-pass logslatch)
 

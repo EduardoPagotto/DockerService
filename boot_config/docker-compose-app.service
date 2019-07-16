@@ -1,5 +1,12 @@
-# copy as: /etc/systemd/system/docker-compose-app.service
-# Diretorio Docker-Servers deve ser copiado para /opt
+###Para ativar
+#cp docker-compose-app.service /etc/systemd/system/
+#touch /etc/systemd/system/docker-compose-app.service
+#chmod 664 /etc/systemd/system/docker-compose-app.service
+#systemctl daemon-reload #verifica todos os .service nos diretorios de services
+#systemctl enable docker-compose-app #para incluir no system
+##systemctl enable docker-compose-app #para desabilitar do system
+#systemctl start docker-compose-app
+###
 
 [Unit]
 Description=Docker Compose Application Service
@@ -7,13 +14,18 @@ Requires=docker.service
 After=docker.service
 
 [Service]
-WorkingDirectory=/opt/Docker-Servers
-ExecStart=/usr/bin/docker-compose up
-ExecStop=/usr/bin/docker-compose down
+Type=idle
+User=desenv
+Restart=always
+#Restart=on-failure
 TimeoutStartSec=0
-Restart=on-failure
 StartLimitIntervalSec=60
 StartLimitBurst=3
+WorkingDirectory=/home/desenv/Projetos/DockerService
+ExecStart=/usr/bin/docker-compose up
+ExecStop=/usr/bin/docker-compose down
+#ExecStart=/usr/bin/docker start -a rsyslog_container nginx_container redis_container
+#ExecStop=/usr/bin/docker stop -t 2 redis_container nginx_container rsyslog_container
 
 [Install]
 WantedBy=multi-user.target
