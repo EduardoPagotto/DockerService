@@ -96,7 +96,7 @@ services:
 
   # Syslog
   syslog-ng:
-    build: ./syslog-ng
+    build: ./syslog
     image: balabit_syslog-ng
     container_name: syslog-ng-teste
     depends_on:
@@ -111,13 +111,15 @@ services:
   # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
   # rsyslog:
   #   build: ./rsyslog
-  #   container_name: rsyslog_container
-  #   image: img_rsyslog
+  #   container_name: rsyslog_container_test
+  #   image: rsyslog_imagem
+  #   environment:
+  #   - "TZ=America/Sao_Paulo" # (-03, -0300)
   #   ports:
   #   - 514:514/udp
   #   volumes:
-  #   - ./rsyslog/log:/var/log
-  #   - ./rsyslog/rsyslog.d:/etc/rsyslog.d
+  #   - ./data/logs:/var/log
+  #   #- ./rsyslog/rsyslog.d:/etc/rsyslog.d
 
   #Servico de NFS 
   # NFS:
