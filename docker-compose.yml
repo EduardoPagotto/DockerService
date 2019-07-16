@@ -65,14 +65,14 @@ services:
     build: ./redis
     container_name: redis_container
     image: redis_image
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: udp://127.0.0.1:514
+    logging:
+      driver: syslog
+      options:
+        syslog-address: udp://127.0.0.1:514
     ports:
     - 6379:6379
-    # depends_on:
-    # - syslog-ng
+    depends_on:
+    - syslog-ng
     volumes:
     - ./data/redis:/data
     #- redis_data_desenv:/data #volume mapeado para o volume docker
@@ -81,12 +81,12 @@ services:
   nginx:
     container_name: nginx_container
     image: nginx
-    # depends_on:
-    # - syslog-ng
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: udp://127.0.0.1:514
+    depends_on:
+    - syslog-ng
+    logging:
+      driver: syslog
+      options:
+        syslog-address: udp://127.0.0.1:514
     volumes:
     - /home/nfs_dsk/data:/usr/share/nginx/html
     #- ./nginx/content:/usr/share/nginx/html
@@ -99,8 +99,8 @@ services:
     build: ./syslog
     image: balabit_syslog-ng
     container_name: syslog-ng-teste
-    depends_on:
-    - elasticsearch
+    # depends_on:
+    # - elasticsearch
     ports:
     - 514:514/udp
     - 601:601/tcp
@@ -189,9 +189,9 @@ services:
   #   #- mongo_data_desenv:/data/db
   #   - ./data/mongo:/data/db
 
-volumes:  
-  redis_data_desenv:
-  mongo_data_desenv:
+# volumes:  
+#   redis_data_desenv:
+#   mongo_data_desenv:
   # nfs_redis:
   #   driver_opts:
   #     type: nfs
