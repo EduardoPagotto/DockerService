@@ -1,0 +1,26 @@
+filebeat:
+  prospectors:
+    - paths:
+      - /var/log/logDireto.log
+      input_type: log
+      document_type: python
+      scan_frequency: 10s
+      fields:
+        indice: 'logDireto'
+        log_type: access
+    - paths:
+      - /var/log/smart_scanner.log
+      input_type: log
+      document_type: python
+      scan_frequency: 10s
+      fields:
+        indice: 'smartcapturez1'
+        log_type: access
+output:
+  logstash:
+    hosts: ["logstash:5044"]
+logging:
+  files:
+    rotateeverybytes: 10485760 # = 10MB
+  selectors: ["*"]
+  level: warning
