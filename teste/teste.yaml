@@ -8,6 +8,8 @@ loggin:
     normal:
       datefmt: '%Y-%m-%dT%H:%M:%S%z'
       format: '%(asctime)s %(levelname)s %(funcName)s %(message)s'
+    syslog:
+      format: 'testez1[%(process)d]: %(message)s'
   handlers:
     Logstash_handler:
       class: logstash.UDPLogstashHandler
@@ -18,7 +20,7 @@ loggin:
       fqdn: False 
       tags: ['indice-app-teste', 'appteste']
       level: DEBUG
-    teste_handler:
+    file_handler:
       backupCount: 30
       class: logging.handlers.TimedRotatingFileHandler
       delay: true
@@ -27,13 +29,13 @@ loggin:
       formatter: normal
       interval: 1
       when: midnight
-    # sys:
-    #   address:
-    #   - localhost
-    #   - 514
-    #   class: logging.handlers.SysLogHandler
-    #   facility: local5
-    #   formatter: syslog
+    sys_handler:
+      address:
+      - localhost
+      - 514
+      class: logging.handlers.SysLogHandler
+      facility: local5
+      formatter: syslog
   # loggers:
   #   testez1:
   #     handlers:
@@ -43,9 +45,9 @@ loggin:
   #     propagate: 'no'
   root:
     handlers:
-    - teste_handler
+    - file_handler
     - Logstash_handler
-    #- sys
+    - sys_handler
     level: DEBUG
 
 

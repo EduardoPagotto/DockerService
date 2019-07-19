@@ -51,27 +51,24 @@ def teste_logs():
     try:
         dados = {'nome':'Eduardo Pagotto', 'idade':48, 'sexo':True, 'identificador':{'id':100, 'teste':'ola'}, 'valor':100.5}
         #dados = {'nome':'Eduardo Pagotto', 'idade':48, 'sexo':True}
-        #logging.info('%s', json.dumps(dados))
-
         logging.info('mensagem generica', extra=dados)
-        #logging.info("mensagem generica, aquisicao=
+        
+        logging.getLogger("requests").setLevel(logging.CRITICAL)
+        logging.getLogger("urllib3").setLevel(logging.CRITICAL)
+        logging.getLogger('werkzeug').setLevel(logging.CRITICAL)
 
-        # logging.getLogger("requests").setLevel(logging.CRITICAL)
-        # logging.getLogger("urllib3").setLevel(logging.CRITICAL)
-        # logging.getLogger('werkzeug').setLevel(logging.CRITICAL)
+        envia_msg_func()
 
-        # envia_msg_func()
+        logging.info('Teste INFO .....')
+        logging.debug('TESTE DEBUG.....')
+        logging.warning('Teste WARNNING .....')
+        logging.error('Teste ERRO .....')
+        logging.fatal('teste FATAL!!!')
 
-        # logging.info('Teste INFO .....')
-        # logging.debug('TESTE DEBUG.....')
-        # logging.warning('Teste WARNNING .....')
-        # logging.error('Teste ERRO .....')
-        # logging.fatal('teste FATAL!!!')
-
-        # raise Exception('MSG DE ERRRO')
+        raise Exception('MSG DE ERRRO')
 
     except:
-        logging.exception('Recebido')
+        logging.exception('Recebido excessao')
 
 def teste_direto():
 
@@ -177,13 +174,16 @@ if __name__ == "__main__":
     #teste_direto()
     config, log = set_config_yaml('Teste Logger V0.0', __name__, os.environ['CFG_APP'] if 'CFG_APP' in os.environ else './teste/teste.yaml')
     log.info('Config carregado com sucesso')
-    try:
-        r = RedisHost(config['app_teste']['redis_host'])
-        logging.info(str(r))
-        logging.info(str(r.ip))
-    except Exception as exp:
-        logging.error(str(exp))
+    
+    teste_logs()
+
+    # try:
+    #     r = RedisHost(config['app_teste']['redis_host'])
+    #     logging.info(str(r))
+    #     logging.info(str(r.ip))
+    # except Exception as exp:
+    #     logging.error(str(exp))
 
 
-    #teste_logs()
+
 

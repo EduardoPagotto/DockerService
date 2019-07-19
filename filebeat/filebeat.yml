@@ -6,16 +6,28 @@ filebeat:
       document_type: python
       scan_frequency: 10s
       fields:
-        indice: 'logDireto'
-        log_type: access
+        indice: 'logdiretoindice'
+        log_type: logdiretotype
+        app: 'testez1'
+
+    # - paths:
+    #   - /var/log/messages.log
+    #   input_type: log
+    #   document_type: python
+    #   scan_frequency: 10s
+    #   fields:
+    #     indice: 'syslogindice'
+    #     log_type: syslogtype
+
     - paths:
-      - /var/log/smart_scanner.log
+      - /var/log/messages.json
       input_type: log
       document_type: python
       scan_frequency: 10s
       fields:
-        indice: 'smartcapturez1'
-        log_type: access
+        indice: 'syslogindice'
+        log_type: syslogtype
+
 output:
   logstash:
     hosts: ["logstash:5044"]

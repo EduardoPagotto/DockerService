@@ -69,10 +69,10 @@ services:
       driver: syslog
       options:
         syslog-address: udp://127.0.0.1:514
-    ports:
-    - 6379:6379
     depends_on:
     - syslog-ng
+    ports:
+    - 6379:6379
     volumes:
     - ./data/redis:/data
     #- redis_data_desenv:/data #volume mapeado para o volume docker
@@ -99,8 +99,8 @@ services:
     build: ./syslog
     image: balabit_syslog-ng
     container_name: syslog-ng-teste
-    # depends_on:
-    # - elasticsearch
+    depends_on:
+    - logstash
     ports:
     - 514:514/udp
     - 601:601/tcp
