@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''
 Created on 20190618
-Update on 20190703
+Update on 20190725
 @author: Eduardo Pagotto
 '''
 
@@ -9,7 +9,7 @@ import os
 import yaml
 import logging
 import logging.config
-#sys.path.append('../')
+##sys.path.append('../')
 
 #import logstash
 from datetime import datetime

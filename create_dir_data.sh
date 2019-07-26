@@ -9,6 +9,9 @@
   mkdir -p ./data/mongo
   mkdir -p ./data/nfs_volume
   mkdir -p ./data/sinopia
+  mkdir -p ./data/postgresql
+  mkdir -p ./data/packages
+  
 
   sudo chmod go-w ./filebeat/filebeat.yml
   sudo chown root.root ./filebeat/filebeat.yml
