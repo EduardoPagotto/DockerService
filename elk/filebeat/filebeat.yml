@@ -2,7 +2,7 @@ filebeat:
   prospectors:
     - paths:
       - /var/log/logDireto.log
-      input_type: log
+      type: log
       document_type: python
       scan_frequency: 10s
       fields:
@@ -12,7 +12,7 @@ filebeat:
 
     # - paths:
     #   - /var/log/messages.log
-    #   input_type: log
+    #   type: log
     #   document_type: python
     #   scan_frequency: 10s
     #   fields:
@@ -21,7 +21,7 @@ filebeat:
 
     - paths:
       - /var/log/messages.json
-      input_type: log
+      type: log
       document_type: python
       scan_frequency: 10s
       fields:
@@ -30,7 +30,7 @@ filebeat:
 
 output:
   logstash:
-    hosts: ["logstash:5044"]
+    hosts: ["elk:5044"]
 logging:
   files:
     rotateeverybytes: 10485760 # = 10MB

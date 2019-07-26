@@ -45,9 +45,9 @@ loggin:
   #     propagate: 'no'
   root:
     handlers:
-    - file_handler
+    #- file_handler
     - Logstash_handler
-    - sys_handler
+    #- sys_handler
     level: DEBUG
 
 

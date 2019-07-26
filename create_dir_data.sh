@@ -3,15 +3,10 @@
   mkdir -p ./data/logs
   mkdir -p ./data/redis
   mkdir -p ./data/elk
-  mkdir -p ./data/elasticsearch
-  mkdir -p ./data/logstash
-  mkdir -p ./data/nfs_volume
-  mkdir -p ./data/mongo
-  mkdir -p ./data/nfs_volume
-  mkdir -p ./data/sinopia
-  mkdir -p ./data/postgresql
-  mkdir -p ./data/packages
-  
+  #mkdir -p ./data/mysql
+  #mkdir -p ./data/nfs_volume
+  #mkdir -p ./data/mongo
+  #mkdir -p ./data/nfs_volume
 
-  sudo chmod go-w ./filebeat/filebeat.yml
-  sudo chown root.root ./filebeat/filebeat.yml
+  sudo chmod go-w ./elk/filebeat/filebeat.yml
+  sudo chown root.root ./elk/filebeat/filebeat.yml

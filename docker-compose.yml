@@ -1,174 +1,73 @@
 version: '3.4'
 services:
-  # # ELK
-  # elk:
-  #   image: sebp/elk
-  #   container_name: elk_container_test
-  #   ports:
-  #     - "5601:5601"
-  #     - "9200:9200"
-  #     - "5044:5044"
-  #   volumes:
-  #   - ./data/elk:/var/lib/elasticsearch
-
-  elasticsearch:
-    image: elasticsearch:6.8.1
-    container_name: elasticsearch_container
-    environment:
-    - discovery.type=single-node
-    #- cluster.name=docker-cluster
-    #- bootstrap.memory_lock=true
-    #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    # ulimits:
-    #   memlock:
-    #     soft: -1
-    #     hard: -1
+  # ELK
+  elk:
+    image: sebp/elk
+    container_name: sebp_elk_container
+    ports:
+      - 5601:5601
+      - 9200:9200
+      - 5044:5044
+      - 5959:5959/udp
     volumes:
-    - ./data/elasticsearch:/usr/share/elasticsearch/data
-    ports:
-    - 9200:9200
-    - 9300:9300
-    # networks:
-    # - esnet
-
-  kibana:
-    image: kibana:6.8.1
-    container_name: kibana_container
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-
-  logstash:
-    image: logstash:6.8.1
-    container_name: logstash_container
-    volumes:
-    - ./logstash/pipeline:/usr/share/logstash/pipeline
-    - ./data/logstash:/mnt
-    depends_on:
-    - elasticsearch
-    ports:
-    - 5044:5044
-    - 9600:9600
-    - 5959:5959/udp
+    - ./elk/logstash:/etc/logstash/conf.d
+    - ./data/elk:/var/lib/elasticsearch
 
   filebeat:
     image: prima/filebeat
     volumes:
-    - ./filebeat/filebeat.yml:/filebeat.yml
+    - ./elk/filebeat/filebeat.yml:/filebeat.yml
     - ./data/logs:/var/log
     depends_on:
-    - logstash
+    - elk
   
-  # Servico de Redis
-  redis:
-    build: ./redis
-    container_name: redis_container
-    image: redis_image
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: udp://127.0.0.1:514
-    # depends_on:
-    # - syslog-ng
-    ports:
-    - 6379:6379
-    volumes:
-    - ./data/redis:/data
-    #- redis_data_desenv:/data #volume mapeado para o volume docker
-
-  # WEB 
-  nginx:
-    container_name: nginx_container
-    image: nginx
-    # depends_on:
-    # - syslog-ng
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: udp://127.0.0.1:514
-    volumes:
-    - /home/nfs_dsk/data:/usr/share/nginx/html
-    #- ./nginx/content:/usr/share/nginx/html
-    - ./nginx/conf.d:/etc/nginx/conf.d
-    ports:
-    - 5080:80  
-
-  # Syslog
-  syslog-ng:
-    build: ./syslog
-    image: balabit_syslog-ng
-    container_name: syslog-ng-teste
-    depends_on:
-    - logstash
-    ports:
-    - 514:514/udp
-    - 601:601/tcp
-    - 6514:6514/tcp
-    volumes:
-    - ./data/logs:/var/log
-
-  # db: # ref: https://hub.docker.com/r/mosquito/pypi-server
-  #   image: postgres
-  #   environment:
-  #     POSTGRES_PASSWORD: pypi-server
-  #     POSTGRES_USER: pypi-server
-  #     POSTGRES_DB: pypi-server
-  #   volumes:
-  #     - ./data/postgresql:/var/lib/postgresql/data
+  # # Servico de Redis
+  # redis:
+  #   build: ./redis
+  #   container_name: redis_container
+  #   image: redis_image
+  #   # logging:
+  #   #   driver: syslog
+  #   #   options:
+  #   #     syslog-address: udp://127.0.0.1:514
+  #   # depends_on:
+  #   # - syslog-ng
   #   ports:
-  #     - 5432:5432
-
-  # pypi_server:
-  #   image: mosquito/pypi-server:latest
-  #   # links:
-  #   #   - db
-  #   restart: always
-  #   depends_on:
-  #   - db
-  #   ports:
-  #     - 8080:8080
+  #   - 6379:6379
   #   volumes:
-  #     - ./data/packages:/usr/lib/pypi-server
-  #   environment:
-  #     # Database URL. Use `sqlite3:///` or `mysql://` when needed
-  #     DB: "postgres://pypi-server:pypi-server@db/pypi-server"
+  #   - ./data/redis:/data
+  #   #- redis_data_desenv:/data #volume mapeado para o volume docker
 
-  #     ## By default random
-  #     #SECRET: changeme
+  # # WEB 
+  # nginx:
+  #   container_name: nginx_container
+  #   image: nginx
+  #   # depends_on:
+  #   # - syslog-ng
+  #   # logging:
+  #   #   driver: syslog
+  #   #   options:
+  #   #     syslog-address: udp://127.0.0.1:514
+  #   volumes:
+  #   - /home/nfs_dsk/data:/usr/share/nginx/html
+  #   #- ./nginx/content:/usr/share/nginx/html
+  #   - ./nginx/conf.d:/etc/nginx/conf.d
+  #   ports:
+  #   - 5080:80  
 
-  #     ## Override standard port
-  #     PORT: 8080
-
-  #     ## Set "X-Headers" (e.g. X-Forwarded-For)
-  #     #PROXY_MODE: 1
-
-  #     ## Set 0 when you want to disable proxying from global pypi
-  #     #PYPI_PROXY: 1
-
-  #     ## Tread-pool size (default cpu_count * 2)
-  #     #POOL_SIZE: 4
-
-  #     ## Maximum proxy clients count
-  #     #MAX_CLIENTS: 25
-
-  #     ## PYPI server url
-  #     #PYPY_SERVER: https://pypi.python.org
-
-
-
-  # Servico de syslog simples, testar com logger -n 127.0.0.1 -P 514 "Test message"
-  # rsyslog:
-  #   build: ./rsyslog
-  #   container_name: rsyslog_container_test
-  #   image: rsyslog_imagem
-  #   environment:
-  #   - "TZ=America/Sao_Paulo" # (-03, -0300)
+  # # Syslog
+  # syslog-ng:
+  #   build: ./syslog
+  #   image: balabit_syslog-ng
+  #   container_name: syslog-ng-teste
+  #   # depends_on:
+  #   # - logstash
   #   ports:
   #   - 514:514/udp
+  #   - 601:601/tcp
+  #   - 6514:6514/tcp
   #   volumes:
   #   - ./data/logs:/var/log
-  #   #- ./rsyslog/rsyslog.d:/etc/rsyslog.d
 
   #Servico de NFS 
   # NFS:
@@ -203,21 +102,6 @@ services:
   #   volumes:
   #   - ./data/mysql:/var/lib/mysql
 
-  # #Servico de npm privado
-  # sinopia:
-  #   image: keyvanfatehi/sinopia:latest
-  #   container_name: sinopia_container
-  #   depends_on:
-  #   - rsyslog
-  #   logging:
-  #     driver: syslog
-  #     options:
-  #       syslog-address: udp://127.0.0.1:514
-  #   ports: 
-  #   - "4873:4873"
-  #   volumes:
-  #   - ./data/sinopia:/opt/sinopia/storage
-  #   - ./sinopia/config.yaml:/opt/sinopia/config.yaml
 
   # #Banco de dados NoSQL MongoDB
   # mongodb:
