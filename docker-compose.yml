@@ -12,6 +12,9 @@ services:
     volumes:
     - ./elk/logstash:/etc/logstash/conf.d
     - ./data/elk:/var/lib/elasticsearch
+    networks:
+      devnet1:
+        ipv4_address: 192.168.9.10
 
   filebeat:
     image: prima/filebeat
@@ -20,23 +23,29 @@ services:
     - ./data/logs:/var/log
     depends_on:
     - elk
+    networks:
+      devnet1:
+        ipv4_address: 192.168.9.11
   
-  # # Servico de Redis
-  # redis:
-  #   build: ./redis
-  #   container_name: redis_container
-  #   image: redis_image
-  #   # logging:
-  #   #   driver: syslog
-  #   #   options:
-  #   #     syslog-address: udp://127.0.0.1:514
-  #   # depends_on:
-  #   # - syslog-ng
-  #   ports:
-  #   - 6379:6379
-  #   volumes:
-  #   - ./data/redis:/data
-  #   #- redis_data_desenv:/data #volume mapeado para o volume docker
+  # Servico de Redis
+  redis:
+    build: ./redis
+    container_name: redis_container
+    image: redis_image
+    # logging:
+    #   driver: syslog
+    #   options:
+    #     syslog-address: udp://127.0.0.1:514
+    # depends_on:
+    # - syslog-ng
+    ports:
+    - 6379:6379
+    volumes:
+    - ./data/redis:/data
+    #- redis_data_desenv:/data #volume mapeado para o volume docker
+    networks:
+      devnet1:
+        ipv4_address: 192.168.9.12
 
   # # WEB 
   # nginx:
@@ -54,6 +63,9 @@ services:
   #   - ./nginx/conf.d:/etc/nginx/conf.d
   #   ports:
   #   - 5080:80  
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.13
 
   # # Syslog
   # syslog-ng:
@@ -68,8 +80,11 @@ services:
   #   - 6514:6514/tcp
   #   volumes:
   #   - ./data/logs:/var/log
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.14
 
-  #Servico de NFS 
+  # #Servico de NFS 
   # NFS:
   #   container_name: nfs_container
   #   #build: ./nfs
@@ -82,6 +97,9 @@ services:
   #   - ./data/nfs_volume:/nfsshare
   #   environment:
   #   - SHARED_DIRECTORY=/nfsshare
+  # #   networks:
+  # #     devnet1:
+  # #       ipv4_address: 192.168.9.15
 
   # mysql:
   #   container_name: mysql_container
@@ -101,7 +119,9 @@ services:
   #   - 3306:3306
   #   volumes:
   #   - ./data/mysql:/var/lib/mysql
-
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.16
 
   # #Banco de dados NoSQL MongoDB
   # mongodb:
@@ -121,6 +141,9 @@ services:
   #   volumes:
   #   #- mongo_data_desenv:/data/db
   #   - ./data/mongo:/data/db
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.17
 
 # volumes:  
 #   redis_data_desenv:
@@ -131,14 +154,13 @@ services:
   #     o: addr=192.168.11.22,rw
   #     device: ":/home/desenv/disco"
 
-# networks:
-#   development-network:
-#     driver: bridge
+networks:
+  devnet1:
+    ipam:
+      driver: default
+      config:
+      - subnet: "192.168.9.0/24"
+        # gateway: 192.168.9.254
 
-#   coletividade-borg-network: # esconde maquina internamente
-#     internal: true
-#     # ipam:
-#     #   config:
-#     #   - subnet: 10.0.0.0/8
-#       #- subnet: 172.16.238.0/24
-#       #- subnet: 2001:3984:3989::/64
+  # development-network:
+  #   driver: bridge
