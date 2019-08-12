@@ -1,0 +1,281 @@
+#!/usr/bin/env python
+
+import argparse
+import logging
+import os.path
+
+from tornado.escape import xhtml_escape
+from tornado.ioloop import IOLoop
+from tornado.web import Application, RequestHandler
+
+
+def write404(self):
+    self.set_status(404)
+
+    self.write(
+        '<html><head><title>404 Not Found</title></head><body>'
+        '<h1>Not found</h1></body></html>'
+        )
+
+
+def is_filesystem_traversal(path):
+    return not os.path.abspath(path).startswith(
+            os.path.abspath(os.path.dirname(__file__))
+        )
+
+
+def get_package_path(package, version=None, want_file=False, filename=None):
+    path = os.path.join(os.path.dirname(__file__), 'packages', package)
+
+    if version:
+        path = os.path.join(path, version)
+
+        if filename:
+            path = os.path.join(path, filename)
+
+    # Don't allow filesystem traversal
+    if is_filesystem_traversal(path):
+        raise ValueError('Bad arguments')
+
+    return path
+
+
+def generate_package_link(package, version):
+    path = os.path.join(
+        os.path.dirname(__file__), 'packages', package, version,
+    )
+
+    # Don't allow filesystem traversal
+    if is_filesystem_traversal(path):
+        raise ValueError('Bad arguments')
+
+    dists = os.listdir(path)
+
+    links = [
+        ('<a href="/packages/{package}/{version}/{each_dist}">'
+        '{each_dist}</a><br />').format(
+            package=xhtml_escape(package),
+            version=xhtml_escape(version),
+            each_dist=xhtml_escape(each_dist),
+        ) for each_dist in dists
+    ]
+
+    return ''.join(links)
+
+
+class IndexHandler(RequestHandler):
+
+    def get(self):
+        self.write(
+            '<html><head><title>simplepypi</title></head><body>'
+            '<a href="/packages">packages</a></body></html>'
+            )
+
+    def post(self):
+        name = self.get_argument('name', default=None)
+        version = self.get_argument('version', default=None)
+        action = self.get_argument(':action', default=None)
+
+        content = self.request.files['content'][0]['body']
+
+        if name and version and content and action == 'file_upload':
+            name = name.lower()
+
+            filename = self.request.files['content'][0]['filename']
+            path = get_package_path(name, version, filename=filename)
+
+            if not os.path.exists(os.path.dirname(path)):
+                os.makedirs(os.path.dirname(path))
+
+            fd = open(path, 'wb')
+            fd.write(content)
+            fd.close()
+
+
+class PypiHandler(RequestHandler):
+
+    def get(self):
+        self.write('<html><body>\n')
+
+        packages_path = os.path.join(os.path.dirname(__file__), 'packages')
+        packages_list = os.listdir(packages_path)
+
+        for each in packages_list:
+            versions_path = os.path.join(packages_path, each)
+            versions_list = os.listdir(versions_path)
+            versions_list.sort()
+
+            if len(versions_list) > 0:
+                self.write(generate_package_link(each, versions_list[-1]))
+
+        self.write('</body></html>')
+
+
+class PypiPackageHandler(RequestHandler):
+
+    def get(self, package):
+        package = package.lower()
+
+        package_path = get_package_path(package)
+
+        if not os.path.exists(package_path):
+            write404(self)
+            return
+
+        versions = os.listdir(package_path)
+        versions.sort()
+
+        if len(versions) == 0:
+            write404(request)
+            return
+
+        if os.path.exists(package_path):
+            self.write('<html><body>')
+            for version in versions:
+                self.write(generate_package_link(package, version))
+            self.write('</body></html>')
+
+        else:
+            write404(self)
+            return
+
+
+class PypiPackageVersionHandler(RequestHandler):
+
+    def get(self, package, version):
+        package = package.lower()
+
+        path = get_package_path(package, version)
+
+        if os.path.exists(path):
+            self.write(
+                '<html><body>{}</body></html>'.format(
+                    generate_package_link(package, version)
+                ))
+
+        else:
+            write404(self)
+            return
+
+
+class PackageBase(RequestHandler):
+
+    def get(self):
+        package_path = os.path.join(os.path.dirname(__file__), 'packages')
+
+        contents = os.listdir(package_path)
+        contents.sort()
+
+        self.write('<html><body>\n')
+
+        for each in contents:
+            self.write(
+                '<a href="/packages/{each}">{each}</a><br />'.format(
+                    each=xhtml_escape(each),
+                    )
+                )
+
+        if len(contents) == 0:
+            self.write('Nothing to see here yet, try uploading a package!')
+
+        self.write('</body></html>\n')
+
+
+class PackageList(RequestHandler):
+
+    def get(self, package):
+        package = package.lower()
+
+        package_path = get_package_path(package)
+
+        if not os.path.exists(package_path):
+            write404(self)
+            return
+
+        versions = os.listdir(package_path)
+        versions.sort()
+
+        if len(versions) == 0:
+            write404(request)
+            return
+
+        self.write('<html><body>\n')
+
+        for each_version in versions:
+            self.write(generate_package_link(package, each_version))
+
+        self.write('</body></html>\n')
+
+
+class PackageDownload(RequestHandler):
+
+    def get(self, name, version, filename):
+        path = get_package_path(name, version, filename=filename)
+        if not os.path.exists(path):
+            write404(self)
+            return
+
+        self.set_header('Content-Type', 'application/octet-stream')
+        self.set_header(
+            'Content-Disposition', 'attachment; filename={0}'.format(
+                os.path.basename(path)
+                )
+            )
+
+        with open(path, 'rb') as fd:
+            while True:
+                chunk = fd.read(1024**2)
+
+                if chunk:
+                    self.write(chunk)
+                else:
+                    break
+
+
+def set_up_server(addr, port):
+    loggers = ['tornado.access', 'tornado.application', 'tornado.general']
+
+    for each_logger in loggers:
+        logger = logging.getLogger(each_logger)
+        logger.setLevel(logging.DEBUG)
+
+        handler = logging.StreamHandler()
+        handler.setFormatter(
+            logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+        logger.addHandler(handler)
+
+    package_path = os.path.join(os.path.dirname(__file__), 'packages')
+
+    if not os.path.exists(package_path):
+        os.makedirs(package_path)
+
+    app = Application([
+        ('/', IndexHandler),
+        ('/pypi/', PypiHandler),
+        ('/pypi/([^/]*)/', PypiPackageHandler),
+        ('/pypi/([^/]*)/([^/]*)', PypiPackageVersionHandler),
+        ('/packages', PackageBase),
+        ('/packages/([^/]*)', PackageList),
+        ('/packages/([^/]*)/([^/]*)/(.*)', PackageDownload),
+        ])
+
+    app.listen(port, address=addr)
+    print('Running on http://{}:{}'.format(addr, port))
+
+    IOLoop.current().start()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+            description='a simple HTTP PyPI-like server')
+
+    parser.add_argument(
+            '--addr', type=str, default='127.0.0.1', help='address to bind to')
+
+    parser.add_argument(
+            '--port', type=int, default=8000, help='TCP port to bind to')
+
+    args = parser.parse_args()
+
+    set_up_server(args.addr, args.port)

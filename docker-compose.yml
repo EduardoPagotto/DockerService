@@ -47,25 +47,25 @@ services:
       devnet1:
         ipv4_address: 192.168.9.12
 
-  # # WEB 
-  # nginx:
-  #   container_name: nginx_container
-  #   image: nginx
-  #   # depends_on:
-  #   # - syslog-ng
-  #   # logging:
-  #   #   driver: syslog
-  #   #   options:
-  #   #     syslog-address: udp://127.0.0.1:514
-  #   volumes:
-  #   - /home/nfs_dsk/data:/usr/share/nginx/html
-  #   #- ./nginx/content:/usr/share/nginx/html
-  #   - ./nginx/conf.d:/etc/nginx/conf.d
-  #   ports:
-  #   - 5080:80  
-  #   networks:
-  #     devnet1:
-  #       ipv4_address: 192.168.9.13
+  # WEB 
+  nginx:
+    container_name: nginx_container
+    image: nginx
+    # depends_on:
+    # - syslog-ng
+    # logging:
+    #   driver: syslog
+    #   options:
+    #     syslog-address: udp://127.0.0.1:514
+    volumes:
+    #- /home/nfs_dsk/data:/usr/share/nginx/html
+    - ./nginx/content:/usr/share/nginx/html
+    - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+    - 5080:80  
+    networks:
+      devnet1:
+        ipv4_address: 192.168.9.13
 
   # # Syslog
   # syslog-ng:
@@ -144,6 +144,25 @@ services:
   #   networks:
   #     devnet1:
   #       ipv4_address: 192.168.9.17
+
+  simplepypi:
+    build: ./simplepypi
+    container_name: simplepypi_container
+    image: simplepypi_image
+    # logging:
+    #   driver: syslog
+    #   options:
+    #     syslog-address: udp://127.0.0.1:514
+    # depends_on:
+    # - syslog-ng
+    ports:
+    - 8000:8000
+    #volumes:
+    #- ./data/redis:/data
+    #- redis_data_desenv:/data #volume mapeado para o volume docker
+    networks:
+      devnet1:
+        ipv4_address: 192.168.9.18
 
 # volumes:  
 #   redis_data_desenv:
