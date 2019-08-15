@@ -29,20 +29,14 @@ services:
   
   # Servico de Redis
   redis:
-    build: ./redis
     container_name: redis_container
-    image: redis_image
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: udp://127.0.0.1:514
-    # depends_on:
-    # - syslog-ng
+    image: redis
+    command: redis-server --requirepass AAABBBCCC
     ports:
     - 6379:6379
     volumes:
-    - ./data/redis:/data
-    #- redis_data_desenv:/data #volume mapeado para o volume docker
+    - redis_data:/data
+    - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       devnet1:
         ipv4_address: 192.168.9.12
@@ -149,23 +143,14 @@ services:
     build: ./simplepypi
     container_name: simplepypi_container
     image: simplepypi_image
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: udp://127.0.0.1:514
-    # depends_on:
-    # - syslog-ng
     ports:
     - 8000:8000
-    #volumes:
-    #- ./data/redis:/data
-    #- redis_data_desenv:/data #volume mapeado para o volume docker
     networks:
       devnet1:
         ipv4_address: 192.168.9.18
 
-# volumes:  
-#   redis_data_desenv:
+volumes:  
+  redis_data:
 #   mongo_data_desenv:
   # nfs_redis:
   #   driver_opts:
@@ -179,7 +164,3 @@ networks:
       driver: default
       config:
       - subnet: "192.168.9.0/24"
-        # gateway: 192.168.9.254
-
-  # development-network:
-  #   driver: bridge

@@ -8,7 +8,6 @@
 ### Manual
 ```bash
 mkdir -p ./data/logs
-mkdir -p ./data/redis
 mkdir -p ./data/elk
 mkdir -p ./data/elasticsearch
 mkdir -p ./data/logstash

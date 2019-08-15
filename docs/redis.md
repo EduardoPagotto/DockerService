@@ -19,7 +19,7 @@ docker build -t img_redis_desenv
 docker run --name redis_desenv -idt -p 6379:6379 img_redis_desenv
 ```
 
-## Redis COM COMPOSER:
+## Redis COM COMPOSER (versao antiga):
 - No diretorio pegasus editar o arquivo docker-compose.yml
 ```file
 version: '2'
