@@ -1,31 +1,31 @@
 version: '3.4'
 services:
-  # ELK
-  elk:
-    image: sebp/elk
-    container_name: sebp_elk_container
-    ports:
-      - 5601:5601
-      - 9200:9200
-      - 5044:5044
-      - 5959:5959/udp
-    volumes:
-    - ./elk/logstash:/etc/logstash/conf.d
-    - ./data/elk:/var/lib/elasticsearch
-    networks:
-      devnet1:
-        ipv4_address: 192.168.9.10
+  # # ELK
+  # elk:
+  #   image: sebp/elk
+  #   container_name: sebp_elk_container
+  #   ports:
+  #     - 5601:5601
+  #     - 9200:9200
+  #     - 5044:5044
+  #     - 5959:5959/udp
+  #   volumes:
+  #   - ./elk/logstash:/etc/logstash/conf.d
+  #   - ./data/elk:/var/lib/elasticsearch
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.10
 
-  filebeat:
-    image: prima/filebeat
-    volumes:
-    - ./elk/filebeat/filebeat.yml:/filebeat.yml
-    - ./data/logs:/var/log
-    depends_on:
-    - elk
-    networks:
-      devnet1:
-        ipv4_address: 192.168.9.11
+  # filebeat:
+  #   image: prima/filebeat
+  #   volumes:
+  #   - ./elk/filebeat/filebeat.yml:/filebeat.yml
+  #   - ./data/logs:/var/log
+  #   depends_on:
+  #   - elk
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.11
   
   # Servico de Redis
   redis:
@@ -41,25 +41,25 @@ services:
       devnet1:
         ipv4_address: 192.168.9.12
 
-  # WEB 
-  nginx:
-    container_name: nginx_container
-    image: nginx
-    # depends_on:
-    # - syslog-ng
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: udp://127.0.0.1:514
-    volumes:
-    #- /home/nfs_dsk/data:/usr/share/nginx/html
-    - ./nginx/content:/usr/share/nginx/html
-    - ./nginx/conf.d:/etc/nginx/conf.d
-    ports:
-    - 5080:80  
-    networks:
-      devnet1:
-        ipv4_address: 192.168.9.13
+  # # WEB 
+  # nginx:
+  #   container_name: nginx_container
+  #   image: nginx
+  #   # depends_on:
+  #   # - syslog-ng
+  #   # logging:
+  #   #   driver: syslog
+  #   #   options:
+  #   #     syslog-address: udp://127.0.0.1:514
+  #   volumes:
+  #   #- /home/nfs_dsk/data:/usr/share/nginx/html
+  #   - ./nginx/content:/usr/share/nginx/html
+  #   - ./nginx/conf.d:/etc/nginx/conf.d
+  #   ports:
+  #   - 5080:80  
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.13
 
   # # Syslog
   # syslog-ng:
@@ -139,15 +139,15 @@ services:
   #     devnet1:
   #       ipv4_address: 192.168.9.17
 
-  simplepypi:
-    build: ./simplepypi
-    container_name: simplepypi_container
-    image: simplepypi_image
-    ports:
-    - 8000:8000
-    networks:
-      devnet1:
-        ipv4_address: 192.168.9.18
+  # simplepypi:
+  #   build: ./simplepypi
+  #   container_name: simplepypi_container
+  #   image: simplepypi_image
+  #   ports:
+  #   - 8000:8000
+  #   networks:
+  #     devnet1:
+  #       ipv4_address: 192.168.9.18
 
 volumes:  
   redis_data:
